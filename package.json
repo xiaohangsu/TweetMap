@@ -1,0 +1,29 @@
+{
+  "name": "web-compiler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack-dev-server",
+    "run": "nodemon app.js"
+  },
+  "author": "XiaohangSu",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^0.26.1",
+    "extract-text-webpack-plugin": "^2.0.0-rc.3",
+    "node-sass": "^4.5.0",
+    "nodemon": "^1.11.0",
+    "sass-loader": "^6.0.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0"
+  },
+  "dependencies": {
+    "crypto": "0.0.3",
+    "koa": "^1.2.5",
+    "oauth-1.0a": "^2.1.0",
+    "request": "^2.79.0",
+    "vue": "^2.1.10"
+  }
+}
