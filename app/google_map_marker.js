@@ -1,4 +1,5 @@
 import googleMap from './google_map';
+import chunk from './request_public_tweet';
 export default (()=> {
 	this.label = "ABCDEFGHIJKLMNOPQRSTUVWSYZ";
 	this.locations = [
