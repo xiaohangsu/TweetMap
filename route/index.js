@@ -3,7 +3,6 @@ var router = require('koa-router')();
 var send   = require('koa-send');
 
 router.get('/', function*(){
-    console.log(this);
     yield send(this, './index.html');
 });
 

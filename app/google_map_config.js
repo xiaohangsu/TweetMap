@@ -1,11 +1,13 @@
 export default {
-    zoom: 1,
+    zoom: 2,
     center: {
-        lat: -34.397,
-        lng: 150.664
+        lat: 40.695204,
+        lng: -73.984523
     },
     mapTypeControl: true,
     scaleControl: true,
+    maxZoom: 15,
+    minZoom: 2,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
       mapTypeIds: ['Standard', 'Silver', 'Retro', 'Dark', 'Night', 'Aubergine']

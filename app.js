@@ -1,4 +1,4 @@
-var koa     = require('koa');
+var koa   = require('koa');
 const app = koa();
 
 
