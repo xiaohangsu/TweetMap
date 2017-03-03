@@ -11,6 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "css-loader": "^0.26.1",
+    "eslint": "^3.16.1",
     "extract-text-webpack-plugin": "^2.0.0-rc.3",
     "node-sass": "^4.5.0",
     "nodemon": "^1.11.0",
