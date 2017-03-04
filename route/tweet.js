@@ -99,6 +99,13 @@ router.get('/tweet/:id', function*() {
     } else {
         this.body = tweetsQueue.getNewTweetsDownToId(id);
     }
+}).get('/tweetDetail/:id', function*() {
+    let id = parseInt(this.params.id);
+    if (!isNaN(id)) {
+        this.body = tweetsQueue.getTweetDetail(this.params.id);
+    } else {
+        console.log('/TweetDetail/'+ id + ' NOT FOUND');
+    }
 });
 
 

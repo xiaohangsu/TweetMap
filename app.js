@@ -1,9 +1,9 @@
-var koa   = require('koa');
+const koa   = require('koa');
 const app = koa();
 
 
-var index  = require('./route/index');
-var tweet  = require('./route/tweet');
+const index  = require('./route/index');
+const tweet  = require('./route/tweet');
 app
     .use(index.routes())
     .use(tweet.routes())

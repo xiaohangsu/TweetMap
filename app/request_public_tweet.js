@@ -4,18 +4,21 @@ class Tweets {
     constructor() {
         this.lastId = '';
         this.tweetReq = new XMLHttpRequest();
+        this.tweetDetailReq = new XMLHttpRequest();
         this.tweets = {
-            markers: [],
-            infoWindows: []
+            markers: []
         };
-        this.markerCluster = new MarkerClusterer(googleMap, this.tweets.markers,
-        {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+        this.remainTweets = {
+            markers: []
+        };
+
         this.lastInfoWindow = {};
         this.lastMarker = {};
-        this.remainTweets = {
-            markers: [],
-            infoWindows: []
-        };
+
+        this.markerCluster = new MarkerClusterer(googleMap, this.tweets.markers,
+        {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
+
 
 
         this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
@@ -32,13 +35,10 @@ class Tweets {
             if (len !== 0) {
                 for (let i = 0; i < len / 20; i++) {
                     let marker = this.remainTweets.markers[0];
-                    let infoWindows = this.remainTweets.infoWindows[0];
                     this.remainTweets.markers.shift();
-                    this.remainTweets.infoWindows.shift();
 
                     this.tweets.markers.push(marker);
                     marker.setMap(googleMap);
-                    this.tweets.infoWindows.push(infoWindows);
                 }
             }
         }, 200);
@@ -54,24 +54,29 @@ class Tweets {
                 this.lastId = json[i].id;
                 this.remainTweets.markers.push(marker);
 
-                // info window
-                let infoWindow = new google.maps.InfoWindow({
-                    content: this.infoWindowsContent(json[i]),
-                    maxWidth: 200
-                });
-                this.remainTweets.infoWindows.push(infoWindow);
+
+
 
                 marker.addListener('click', ()=>{
                     if (this.lastInfoWindow.close !== undefined) {
                         this.closeInfoWindow(this.lastInfoWindow);
                         this.markerStop(this.lastMarker);
                     }
-                    this.openInfoWindow(infoWindow, marker);
+                    this.getTweetDetail(json[i].id);
                     this.markerBounce(marker);
-
                 });
             }
             this.markerCluster.addMarkers(this.tweets.markers);
+        };
+
+        this.tweetDetailReq.onload = ()=> {
+            let json = JSON.parse(this.tweetDetailReq.responseText);
+            // info window
+            let infoWindow = new google.maps.InfoWindow({
+                content: this.infoWindowsContent(json),
+                maxWidth: 200
+            });
+            this.openInfoWindow(infoWindow);
         };
     }
 
@@ -95,8 +100,14 @@ class Tweets {
         return content;
     }
 
-    openInfoWindow(infoWindow, marker) {
-        infoWindow.open(googleMap, marker);
+    getTweetDetail(id) {
+        this.tweetDetailReq.open('GET', '/tweetDetail/' + (id == '' ? 'null' : id));
+        this.tweetDetailReq.send();
+    }
+
+
+    openInfoWindow(infoWindow) {
+        infoWindow.open(googleMap, this.lastMarker);
         this.lastInfoWindow = infoWindow;
     }
 
@@ -112,7 +123,6 @@ class Tweets {
     markerStop(marker) {
         marker.setAnimation(null);
     }
-
 
     getTweetsCount() {
         return this.tweets.markers.length;
@@ -132,8 +142,7 @@ class Tweets {
         clearMarkers();
         clearCluster();
         this.tweets = {
-            markers: [],
-            infoWindows: []
+            markers: []
         };
     }
 }

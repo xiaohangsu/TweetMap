@@ -11,13 +11,17 @@ class TweetsQueue {
 
     tweet(json) {
         return {
-            id: json['id_str'],
-            text: json.text,
-            'created_at': json['created_at'].split('+')[0],
-            coordinates: json.coordinates.coordinates,
-            user: {
-                'screen_name': json.user['screen_name'],
-                'profile_image_url': json.user['profile_image_url_https']
+            tweet: {
+                id: json['id_str'],
+                coordinates: json.coordinates.coordinates
+            },
+            tweetDetail: {
+                text: json.text,
+                'created_at': json['created_at'].split('+')[0],
+                user: {
+                    'screen_name': json.user['screen_name'],
+                    'profile_image_url': json.user['profile_image_url_https']
+                }
             }
         };
     }
@@ -29,34 +33,45 @@ class TweetsQueue {
 
 
     addTweet(json) {
-        if (this.tweets[json.id] == undefined) {
-            this.tweets[json.id] = this.tweet(json);
-            this.tweetsKey.push(json.id);
+        if (this.tweets[json['id_str']] == undefined) {
+            this.tweets[json['id_str']] = this.tweet(json);
+            this.tweetsKey.push(json['id_str']);
             if (this.tweetsKey.length == this.limits) {
                 this.removeOldestTweetFromQueue();
             }
         }
     }
 
+    // get Brief of id and Coordinates
     getTopk(k) {
-        let tweetsList = {};
+        let tweetsList = [];
         let len = this.tweetsKey.length;
         for (let i = len > k ? len - k : 0; i < len; i++) {
-            tweetsList[this.tweetsKey[len - i + 1]] = this.tweets[this.tweetsKey[len - i + 1]];
+            if (this.tweetsKey[len - i + 1] !== undefined) {
+                tweetsList.push(this.tweets[this.tweetsKey[len - i + 1]].tweet);
+            }
         }
         return tweetsList;
     }
 
+    // get Brief info of id and Coordinates
     getNewTweetsDownToId(pastId, max = 20) {
-        let tweetsList = {};
+        let tweetsList = [];
         let len = this.tweetsKey.length;
         for (let i = len < max ? 0 : len - max; i < len; i++) {
-            tweetsList[this.tweetsKey[i]] = this.tweets[this.tweetsKey[i]];
+            if (this.tweets[this.tweetsKey[i]] !== undefined) {
+                tweetsList.push(this.tweets[this.tweetsKey[i]].tweet);
+            }
             if (pastId == this.tweetsKey[i]) {
-                tweetsList = {};
+                tweetsList = [];
             }
         }
         return tweetsList;
+    }
+
+    // get Tweet Detail info
+    getTweetDetail(id) {
+        return this.tweets[id].tweetDetail;
     }
 
     getCount() {
