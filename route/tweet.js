@@ -10,7 +10,7 @@ let oauth = OAuth({
         key: tweetOauth.key,
         secret: tweetOauth.secret,
     },
-    signature_method: tweetOauth['signature_method'],
+    signature_method: tweetOauth.signatureMethod,
     hash_function: function(base_string, key) {
         return crypto.createHmac('sha1', key).update(base_string).digest('base64');
     }
@@ -48,21 +48,21 @@ tweetStream._write = function(chunk, enc, cb) {
 };
 
 tweetStream.on('drain', ()=>{
-    console.log('Drain');
+    console.log('tweetStream Drain');
 });
-tweetStream.on('pipe', ()=>{
-    console.log('Pipe');
+tweetStream.on('pipe', (src)=>{
+    console.log('tweetStream Pipe');
 });
 tweetStream.on('error', ()=>{
-    console.log('ERROR');
+    console.log('tweetStream ERROR');
 });
 tweetStream.on('finish', ()=>{
     tweetsStreamingReq = null;
     console.log('tweetStream Finish');
 });
 tweetStream.on('unpipe', (obj)=>{
-    console.log('unpipe', obj);
-})
+    console.log('tweetStream Unpipe', obj);
+});
 
 tweetStream.on('close', ()=>{
     tweetsStreamingReq = null;
@@ -92,6 +92,7 @@ router.get('/tweet/:id', function*() {
     if (tweetsStreamingReq == null) {
         tweetsStreamingReq = createTweetsStreamingReq();
     }
+    console.log(tweetsQueue.getCount());
     let id = parseInt(this.params.id);
     if (isNaN(id)) {
         this.body = tweetsQueue.getTopk(100);
