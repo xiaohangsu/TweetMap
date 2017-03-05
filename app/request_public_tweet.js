@@ -17,17 +17,12 @@ class Tweets {
 
         this.markerCluster = new MarkerClusterer(googleMap, this.tweets.markers,
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-
-
-
-
         this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
         this.tweetReq.send();
         this.interval = setInterval(()=> {
             this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
             this.tweetReq.send();
         }, 4000);
-
 
         // animation for adding Tweets
         this.updateTweetsInterval = setInterval(()=> {
@@ -36,7 +31,6 @@ class Tweets {
                 for (let i = 0; i < len / 20; i++) {
                     let marker = this.remainTweets.markers[0];
                     this.remainTweets.markers.shift();
-
                     this.tweets.markers.push(marker);
                     marker.setMap(googleMap);
                 }
@@ -56,6 +50,7 @@ class Tweets {
 
 
 
+                this.markerCluster.addMarker(marker);
 
                 marker.addListener('click', ()=>{
                     if (this.lastInfoWindow.close !== undefined) {
@@ -66,7 +61,6 @@ class Tweets {
                     this.markerBounce(marker);
                 });
             }
-            this.markerCluster.addMarkers(this.tweets.markers);
         };
 
         this.tweetDetailReq.onload = ()=> {

@@ -28,8 +28,6 @@ Vue.component('mid-control', {
     }
 });
 
-
-
 // BOTTOM CENTER, CONTROL CLEAR AND RESET
 Vue.component('bottom-control', {
     template: '\
@@ -46,7 +44,6 @@ Vue.component('bottom-control', {
     }
 });
 
-
 // LEFT_BOTTOM Component: key words search bar
 Vue.component('left-bottom-control', {
     template: '\
@@ -57,7 +54,6 @@ Vue.component('left-bottom-control', {
         </div>\
     </form>'
 });
-
 
 new Vue({
     el: '#mid-control'

@@ -6,10 +6,10 @@ export default {
     },
     mapTypeControl: true,
     scaleControl: true,
-    maxZoom: 15,
+    maxZoom: 18,
     minZoom: 2,
     mapTypeControlOptions: {
-      style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-      mapTypeIds: ['Standard', 'Silver', 'Retro', 'Dark', 'Night', 'Aubergine']
+        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+        mapTypeIds: ['Standard', 'Silver', 'Retro', 'Dark', 'Night', 'Aubergine']
     }
 };

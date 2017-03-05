@@ -31,7 +31,6 @@ class TweetsQueue {
         this.tweetsKey.shift();
     }
 
-
     addTweet(json) {
         if (this.tweets[json['id_str']] == undefined) {
             this.tweets[json['id_str']] = this.tweet(json);
@@ -71,11 +70,17 @@ class TweetsQueue {
 
     // get Tweet Detail info
     getTweetDetail(id) {
-        return this.tweets[id].tweetDetail;
+        let tweetDetail = this.tweets[id].tweetDetail;
+        tweetDetail.id = id;
+        return tweetDetail;
     }
 
     getCount() {
         return this.tweetsKey.length;
+    }
+
+    hasNew(id) {
+        return !(id == this.tweetsKey[this.tweetsKey.length - 1]);
     }
 }
 
