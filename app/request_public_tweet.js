@@ -38,7 +38,8 @@ class Tweets {
         }, 200);
 
         this.tweetReq.onload = ()=> {
-            console.log(this.remainTweets.markers.length);
+            console.log([this.tweetReq.responseText]);
+            if (this.tweetReq.responseText == '') return;
             let json = JSON.parse(this.tweetReq.responseText);
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
