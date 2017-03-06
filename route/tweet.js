@@ -9,11 +9,10 @@ router.get('/tweet/:id', function*() {
     if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
         tweetsStream.createTweetsStreamingReq();
     }
-    console.log(tweetsQueue.getCount(), tweetsQueue.hasNew(id));
     if (isNaN(id)) {
-        this.body = tweetsQueue.getTopk(100);
+        this.body = yield tweetsQueue.getTopk(100);
     } else {
-        this.body = tweetsQueue.getNewTweetsDownToId(id);
+        this.body = yield tweetsQueue.getNewTweetsDownToId(id);
     }
 }).get('/tweetDetail/:id', function*() {
     let id = parseInt(this.params.id);
