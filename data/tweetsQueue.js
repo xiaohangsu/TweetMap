@@ -15,8 +15,9 @@ class TweetsQueue {
                 coordinates: json.coordinates.coordinates
             },
             tweetDetail: {
+                id: json['id_str'],
                 text: json.text,
-                CreatedAt: json['created_at'].split('+')[0],
+                createdAt: json['created_at'].split('+')[0],
                 user: {
                     name: json.user['screen_name'],
                     profileImageUrl: json.user['profile_image_url_https']
@@ -38,30 +39,38 @@ class TweetsQueue {
             });
         }, (err)=> {
             console.error(err);
+            return err;
         });
     }
 
     // get Brief info of id and Coordinates
-    getNewTweetsDownToId(pastId, max = 20) {
+    getNewTweetsDownToId(pastId, max = 200) {
         return this.elasticSearch.searchAfterId(pastId, 'tweet', 'twitter', max).then((res)=>{
             return res.hits.hits.map((data)=>{
                 return data['_source'].tweet;
             });
         }, (err)=> {
             console.error(err);
+            return err;
         });
     }
 
     // get Tweet Detail info
     getTweetDetail(id) {
-
+        return this.elasticSearch.getId(id, 'tweet', 'twitter').then((res)=> {
+            return res['_source'].tweetDetail;
+        }, (err)=> {
+            console.log(err);
+            return err;
+        });
     }
 
     getCount() {
+        return this.count;
     }
 
     hasNew(id) {
-        return true;
+        return this.count != id;
     }
 }
 

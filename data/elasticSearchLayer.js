@@ -15,7 +15,7 @@ class ElasticSearchLayer {
             body: json,
             id: this.id++
         }).then((response)=>{
-            console.log('Document added. id: ', id, this.id);
+            console.log('Document added. id: ', id);
         }, (err)=>{
             console.log(err.message);
         });
@@ -40,7 +40,6 @@ class ElasticSearchLayer {
             size: size,
             body: {
                 'from': 0,
-                '_source': 'tweet.*',
                 'query': {
                     'range': {
                         'tweet.id': {
@@ -54,13 +53,13 @@ class ElasticSearchLayer {
     }
 
     getKNewest(k, type, index) {
-        return this.getCount(index, type).then((res)=> {
+        return this.getCount(type, index).then((res)=> {
             let startId = res.count > k ? res.count - k : 0;
             return this.searchAfterId(startId, type, index, k);
         });
     }
 
-    getCount(index, type) {
+    getCount(type, index) {
         return this.client.count({
             index: index,
             type: type
@@ -70,6 +69,14 @@ class ElasticSearchLayer {
     deleteIndex(index) {
         return this.client.indices.delete({
             index: index
+        });
+    }
+
+    getId(id, type, index) {
+        return this.client.get({
+            index: index,
+            type: type,
+            id: id
         });
     }
 

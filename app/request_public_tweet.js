@@ -22,7 +22,7 @@ class Tweets {
         this.interval = setInterval(()=> {
             this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
             this.tweetReq.send();
-        }, 4000);
+        }, 10000);
 
         // animation for adding Tweets
         this.updateTweetsInterval = setInterval(()=> {
@@ -35,12 +35,12 @@ class Tweets {
                     marker.setMap(googleMap);
                 }
             }
-        }, 200);
+        }, 400);
 
         this.tweetReq.onload = ()=> {
-            console.log([this.tweetReq.responseText]);
             if (this.tweetReq.responseText == '') return;
             let json = JSON.parse(this.tweetReq.responseText);
+            console.log(json.length);
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
                 let marker = new google.maps.Marker({
@@ -80,16 +80,16 @@ class Tweets {
         '<div class="content">'+
             '<a class="content-top-bar" href ="https://twitter.com/' + json.user['screen_name'] + '" target="_blank">\
                 <div class="content-top-bar-img">\
-                    <img src=' + json.user['profile_image_url']+ '/>\
+                    <img src=' + json.user.profileImageUrl + '/>\
                 </div>\
                 <div class="content-top-bar-name">' +
-                    json.user['screen_name'] +
+                    json.user.name +
                 '</div>' +
             '</a>' +
             '<div class="content-line"></div>' + 
-            '<a class="content-content" href="https://twitter.com/' + json.user['screen_name'] + '/status/' + json.id + '" target="_blank">'+
+            '<a class="content-content" href="https://twitter.com/' + json.user.name + '/status/' + json.id + '" target="_blank">'+
                 '<p class="content-content-tweet">' + json.text + '</p>'+
-                '<p class="content-content-created">'+ json['created_at'] + '</p>'+
+                '<p class="content-content-created">'+ json.createdAt + '</p>'+
             '</a>'+
         '</div>';
         return content;
