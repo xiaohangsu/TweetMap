@@ -5,8 +5,8 @@ let tweetsQueue    = require('../data/tweetsQueue');
 
 router.get('/tweet/:id', function*() {
     let id = parseInt(this.params.id);
-
-    if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew()) {
+    console.log(!tweetsQueue.hasNew(id));
+    if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
         tweetsStream.createTweetsStreamingReq();
     }
     if (isNaN(id)) {
@@ -14,6 +14,8 @@ router.get('/tweet/:id', function*() {
     } else {
         this.body = yield tweetsQueue.getNewTweetsDownToId(id);
     }
+
+
 }).get('/tweetDetail/:id', function*() {
     let id = parseInt(this.params.id);
     if (!isNaN(id)) {
@@ -21,7 +23,13 @@ router.get('/tweet/:id', function*() {
     } else {
         console.log('/TweetDetail/'+ id + ' NOT FOUND');
     }
-});
 
+
+}).get('/tweet/search/:text', function*() {
+    this.body = yield tweetsQueue.search(this.params.text);
+
+}).get('/tweet/search/:text/:scrollId', function*() {
+    this.body = yield tweetsQueue.scroll(this.params.text, this.params.scrollId);
+});
 
 module.exports = router;

@@ -2,45 +2,20 @@ import googleMap from './google_map';
 
 class Tweets {
     constructor() {
-        this.lastId = '';
-        this.tweetReq = new XMLHttpRequest();
-        this.tweetDetailReq = new XMLHttpRequest();
-        this.tweets = {
-            markers: []
-        };
-        this.remainTweets = {
-            markers: []
-        };
-
-        this.lastInfoWindow = {};
-        this.lastMarker = {};
-
-        this.markerCluster = new MarkerClusterer(googleMap, this.tweets.markers,
-        {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-        this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
-        this.tweetReq.send();
-        this.interval = setInterval(()=> {
-            this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
-            this.tweetReq.send();
-        }, 10000);
-
-        // animation for adding Tweets
-        this.updateTweetsInterval = setInterval(()=> {
-            let len = this.remainTweets.markers.length;
-            if (len !== 0) {
-                for (let i = 0; i < len / 20; i++) {
-                    let marker = this.remainTweets.markers[0];
-                    this.remainTweets.markers.shift();
-                    this.tweets.markers.push(marker);
-                    marker.setMap(googleMap);
-                }
-            }
-        }, 400);
-
-        this.tweetReq.onload = ()=> {
+        let tweetsOnLoadEvent = ()=> {
             if (this.tweetReq.responseText == '') return;
+
             let json = JSON.parse(this.tweetReq.responseText);
-            console.log(json.length);
+            console.log(this.remainTweets.markers.length);
+            // process : if is searching text
+            if (this.searchText != '') {
+                if (json.scrollId != undefined) this.scrollId = json.scrollId;
+                else {
+                    this.clearReqInterval();
+                }
+                this.searchTotal = json.total;
+                json = json.data;
+            }
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
                 let marker = new google.maps.Marker({
@@ -48,9 +23,6 @@ class Tweets {
                 });
                 this.lastId = json[i].id;
                 this.remainTweets.markers.push(marker);
-
-
-
                 this.markerCluster.addMarker(marker);
 
                 marker.addListener('click', ()=>{
@@ -64,7 +36,7 @@ class Tweets {
             }
         };
 
-        this.tweetDetailReq.onload = ()=> {
+        let tweetDetailOnLoadEvent = ()=> {
             let json = JSON.parse(this.tweetDetailReq.responseText);
             // info window
             let infoWindow = new google.maps.InfoWindow({
@@ -73,12 +45,59 @@ class Tweets {
             });
             this.openInfoWindow(infoWindow);
         };
+
+
+        this.lastId = '';
+        this.tweetReq = new XMLHttpRequest();
+        this.tweetDetailReq = new XMLHttpRequest();
+        this.tweets = {
+            markers: []
+        };
+        this.remainTweets = {
+            markers: []
+        };
+
+        this.lastInfoWindow = {};
+        this.lastMarker = {};
+        this.backupTweets = { // backup for search text
+            markers: []
+        };
+        this.searchText = '';
+        this.scrollId = '';
+        this.searchTotal = 0;
+        this.markerCluster = new MarkerClusterer(googleMap, this.tweets.markers,
+        {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+        this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
+        this.tweetReq.send();
+
+
+
+        this.reqInterval = 0;
+
+
+        this.setReqInterval();
+        // animation for adding Tweets
+        this.updateTweetsInterval = setInterval(()=> {
+            let len = this.remainTweets.markers.length;
+            if (len !== 0) {
+                for (let i = 0; i < len / 20; i++) {
+                    let marker = this.remainTweets.markers[0];
+                    this.remainTweets.markers.shift();
+                    this.tweets.markers.push(marker);
+                    marker.setMap(googleMap);
+                }
+            }
+        }, 400);
+
+
+        this.tweetReq.onload = tweetsOnLoadEvent;
+        this.tweetDetailReq.onload = tweetDetailOnLoadEvent;
     }
 
     infoWindowsContent(json) {
         let content =
         '<div class="content">'+
-            '<a class="content-top-bar" href ="https://twitter.com/' + json.user['screen_name'] + '" target="_blank">\
+            '<a class="content-top-bar" href ="https://twitter.com/' + json.user.name + '" target="_blank">\
                 <div class="content-top-bar-img">\
                     <img src=' + json.user.profileImageUrl + '/>\
                 </div>\
@@ -123,6 +142,36 @@ class Tweets {
         return this.tweets.markers.length;
     }
 
+    search(searchText) {
+        if (searchText != '') {
+            this.searchText = searchText;
+            this.scrollId = '';
+            this.tweetReq.open('GET', '/tweet/search/' + this.searchText);
+            this.tweetReq.send();
+            this.clearMap();
+            this.clearReqInterval();
+            this.setSearchReqInterval();
+        }
+    }
+
+    setReqInterval() {
+        this.reqInterval = setInterval(()=> {
+            this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
+            this.tweetReq.send();
+        }, 10000);
+    }
+
+    setSearchReqInterval() {
+        this.reqInterval = setInterval(()=> {
+            this.tweetReq.open('GET', '/tweet/search/' + this.searchText + '/' + this.scrollId);
+            this.tweetReq.send();
+        }, 10000);
+    }
+
+    clearReqInterval() {
+        clearInterval(this.reqInterval);
+    }
+
     clearMap() {
         const clearMarkers = ()=> {
             for (let i = 0; i < this.tweets.markers.length; i++) {
@@ -139,7 +188,11 @@ class Tweets {
         this.tweets = {
             markers: []
         };
+        this.remainTweets = {
+            markers: []
+        };
     }
+
 }
 
 const tweets = new Tweets();

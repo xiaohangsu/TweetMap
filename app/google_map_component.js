@@ -47,12 +47,18 @@ Vue.component('bottom-control', {
 // LEFT_BOTTOM Component: key words search bar
 Vue.component('left-bottom-control', {
     template: '\
-    <form id="search-form" clas="form-inline">\
-        <div class="form-group">\
-            <input type="text" class="form-control" placeholder="keywords"/>\
-            <button type="submit" class="btn btn-default">filter</button>\
+    <div id="search-form" clas="form-inline">\
+        <div class="input-group">\
+            <input type="text" class="form-control" placeholder="keywords" v-model="searchText"/>\
+            <button class="btn btn-default" v-on:click="tweets.search(searchText)">filter</button>\
         </div>\
-    </form>'
+    </div>',
+    data: ()=> {
+        return {
+            tweets: tweets,
+            searchText: ''
+        };
+    }
 });
 
 new Vue({

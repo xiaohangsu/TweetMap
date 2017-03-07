@@ -33,7 +33,7 @@ class ElasticSearchLayer {
         });
     }
 
-    searchAfterId(id, type, index, size) {
+    getAfterId(id, type, index, size) {
         return this.client.search({
             index: index,
             type: type,
@@ -55,7 +55,7 @@ class ElasticSearchLayer {
     getKNewest(k, type, index) {
         return this.getCount(type, index).then((res)=> {
             let startId = res.count > k ? res.count - k : 0;
-            return this.searchAfterId(startId, type, index, k);
+            return this.getAfterId(startId, type, index, k);
         });
     }
 
@@ -77,6 +77,34 @@ class ElasticSearchLayer {
             index: index,
             type: type,
             id: id
+        });
+    }
+
+    search(text, type, index) {
+        return this.client.search({
+            index: index,
+            type: type,
+            scroll: '60s',
+            body: {
+                size: 100,
+                query: {
+                    bool: {
+                        should: [
+                            {
+                                match: {
+                                    'tweetDetail.text': text
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        });
+    }
+
+    scroll(scrollId) {
+        return this.client.scroll({
+            scrollId: scrollId
         });
     }
 

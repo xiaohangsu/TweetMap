@@ -45,7 +45,7 @@ class TweetsQueue {
 
     // get Brief info of id and Coordinates
     getNewTweetsDownToId(pastId, max = 200) {
-        return this.elasticSearch.searchAfterId(pastId, 'tweet', 'twitter', max).then((res)=>{
+        return this.elasticSearch.getAfterId(pastId, 'tweet', 'twitter', max).then((res)=>{
             return res.hits.hits.map((data)=>{
                 return data['_source'].tweet;
             });
@@ -65,12 +65,49 @@ class TweetsQueue {
         });
     }
 
+    search(text) {
+        return this.elasticSearch.search(text, 'tweet', 'twitter').then((res)=> {
+            let response = {
+                data: res.hits.hits.map((data)=>{
+                    return data['_source'].tweet;
+                }),
+                total: res.hits.total
+            };
+            if (response.data.length < response.total) {
+                response.scrollId = res._scroll_id;
+            }
+            return response;
+        }, (err)=> {
+            console.log(err);
+            return err;
+        });
+    }
+
+    scroll(text, scrollId) {
+        return this.elasticSearch.scroll(scrollId).then((res)=> {
+            console.log(res);
+            let response = {
+                data: res.hits.hits.map((data)=>{
+                    return data['_source'].tweet;
+                }),
+                total: res.hits.total
+            };
+            if (response.data.length < response.total) {
+                response.scrollId = res._scroll_id;
+            }
+            return response;
+        }, (err)=> {
+            console.log(err);
+            return err;
+        });
+    }
+
     getCount() {
         return this.count;
     }
 
     hasNew(id) {
-        return this.count != id;
+        return this.count != parseInt(id);
     }
 }
 
