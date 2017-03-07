@@ -5,7 +5,7 @@
   "main": "",
   "scripts": {
     "build": "./node_modules/.bin/webpack-dev-server",
-    "run": "nodemon app.js"
+    "run": "nodemon app.js --config nodemon.config.json"
   },
   "author": "XiaohangSu",
   "license": "ISC",
