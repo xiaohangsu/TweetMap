@@ -6,7 +6,6 @@ export default {
     },
     mapTypeControl: true,
     scaleControl: true,
-    maxZoom: 18,
     minZoom: 2,
     mapTypeControlOptions: {
         style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
