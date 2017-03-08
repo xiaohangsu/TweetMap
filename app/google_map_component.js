@@ -32,7 +32,7 @@ Vue.component('mid-control', {
 Vue.component('bottom-control', {
     template: '\
     <div>\
-        <button class="btn btn-danger" v-on:click="tweets.clearMap()">\
+        <button class="btn btn-danger" v-on:click="tweets.reset()">\
             <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>\
              RESET\
         </button>\

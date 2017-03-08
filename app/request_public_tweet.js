@@ -10,9 +10,6 @@ class Tweets {
             // process : if is searching text
             if (this.searchText != '') {
                 if (json.scrollId != undefined) this.scrollId = json.scrollId;
-                else {
-                    this.clearReqInterval();
-                }
                 this.searchTotal = json.total;
                 json = json.data;
             }
@@ -23,7 +20,6 @@ class Tweets {
                 });
                 this.lastId = json[i].id;
                 this.remainTweets.markers.push(marker);
-                this.markerCluster.addMarker(marker);
 
                 marker.addListener('click', ()=>{
                     if (this.lastInfoWindow.close !== undefined) {
@@ -65,6 +61,7 @@ class Tweets {
         this.searchText = '';
         this.scrollId = '';
         this.searchTotal = 0;
+        this.isSearch = false;
         this.markerCluster = new MarkerClusterer(googleMap, this.tweets.markers,
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
         this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
@@ -84,7 +81,9 @@ class Tweets {
                     let marker = this.remainTweets.markers[0];
                     this.remainTweets.markers.shift();
                     this.tweets.markers.push(marker);
-                    marker.setMap(googleMap);
+                    this.markerCluster.addMarker(marker);
+
+                    //marker.setMap(googleMap);
                 }
             }
         }, 400);
@@ -143,6 +142,10 @@ class Tweets {
     }
 
     search(searchText) {
+        if (!this.isSearch) {
+            this.backupTweets = this.tweets;
+        }
+        this.isSearch = true;
         if (searchText != '') {
             this.searchText = searchText;
             this.scrollId = '';
@@ -191,6 +194,22 @@ class Tweets {
         this.remainTweets = {
             markers: []
         };
+    }
+
+    reset() {
+        console.log(this.isSearch, this.backupTweets);
+        this.clearMap();
+
+        if (this.isSearch) {
+            this.searchText = '';
+            this.searchTotal = 0;
+            this.scrollId = '';
+            this.isSearch = false;
+            this.clearReqInterval();
+            this.setReqInterval();
+            this.remainTweets = this.backupTweets;
+            this.backupTweets = {};
+        }
     }
 
 }

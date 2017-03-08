@@ -104,7 +104,8 @@ class ElasticSearchLayer {
 
     scroll(scrollId) {
         return this.client.scroll({
-            scrollId: scrollId
+            scrollId: scrollId,
+            scroll: '120s'
         });
     }
 
