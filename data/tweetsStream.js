@@ -3,29 +3,8 @@ const crypto      = require('crypto');
 const stream      = require('stream');
 const request     = require('request');
 const tweetOauth  = require('../config').tweetOauth;
+
 let tweetsQueue   = require('../data/tweetsQueue');
-
-let oauth = OAuth({
-    consumer: {
-        key: tweetOauth.key,
-        secret: tweetOauth.secret,
-    },
-    signature_method: tweetOauth.signatureMethod,
-    hash_function: function(base_string, key) {
-        return crypto.createHmac('sha1', key).update(base_string).digest('base64');
-    }
-});
-let request_data = {
-    url: 'https://stream.twitter.com/1.1/statuses/filter.json?locations=-180.0,-90.0,180.0,90.0',
-    method: 'POST',
-    headers: {
-    }
-};
-
-let token = {
-    key: tweetOauth.token.key,
-    secret: tweetOauth.token.secret
-};
 
 
 class TweetsStream {
@@ -47,7 +26,6 @@ class TweetsStream {
             if (typeof json == String) {
                 this.lastString += json;
             } else {
-
                 if (json['coordinates'] != null || json['coordinates'] != undefined) {
                     tweetsQueue.addTweet(json);
                 }
@@ -84,13 +62,38 @@ class TweetsStream {
     }
 
     createTweetsStreamingReq() {
-        console.log("Create TweetsStreaming Requst....")
+        console.log('Create TweetsStreaming Requst....');
+        let oauth = OAuth({
+            consumer: {
+                key: tweetOauth.key,
+                secret: tweetOauth.secret,
+            },
+            signature_method: tweetOauth.signatureMethod,
+            hash_function: function(base_string, key) {
+                return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+            }
+        });
+
+        let request_data = {
+            url: 'https://stream.twitter.com/1.1/statuses/filter.json?locations=-180.0,-90.0,180.0,90.0',
+            method: 'POST',
+            headers: {
+            }
+        };
+
+        let token = {
+            key: tweetOauth.token.key,
+            secret: tweetOauth.token.secret
+        };
+
         this.isConnected = true;
         return request({
             url: request_data.url,
             method: request_data.method,
             form: request_data.data,
             headers: oauth.toHeader(oauth.authorize(request_data, token))
+        }).on('response', (response)=>{
+            console.log(response.statusCode, response.statusMessage);
         }).pipe(this.tweetsStream);
     }
 

@@ -6,13 +6,14 @@ class Tweets {
             if (this.tweetReq.responseText == '') return;
 
             let json = JSON.parse(this.tweetReq.responseText);
-            console.log(this.remainTweets.markers.length);
             // process : if is searching text
-            if (this.searchText != '') {
+            if (json.data != undefined) {
                 if (json.scrollId != undefined) this.scrollId = json.scrollId;
                 this.searchTotal = json.total;
                 json = json.data;
             }
+            console.log(json);
+
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
                 let marker = new google.maps.Marker({
@@ -55,10 +56,12 @@ class Tweets {
 
         this.lastInfoWindow = {};
         this.lastMarker = {};
-        this.backupTweets = { // backup for search text
-            markers: []
-        };
+
+        this.backupTweets = {}; // backup for search text
+
         this.searchText = '';
+        this.distance = '';
+        this.searchCoord = [];
         this.scrollId = '';
         this.searchTotal = 0;
         this.isSearch = false;
@@ -107,7 +110,7 @@ class Tweets {
             '<div class="content-line"></div>' + 
             '<a class="content-content" href="https://twitter.com/' + json.user.name + '/status/' + json.id + '" target="_blank">'+
                 '<p class="content-content-tweet">' + json.text + '</p>'+
-                '<p class="content-content-created">'+ json.createdAt + '</p>'+
+                '<p class="content-content-created">'+ (new Date(parseInt(json.createdAt))).toLocaleString() + '</p>'+
             '</a>'+
         '</div>';
         return content;
@@ -157,6 +160,21 @@ class Tweets {
         }
     }
 
+    searchDis(dis, coord) {
+        if (!this.isSearch) {
+            this.backupTweets = this.tweets;
+        }
+        this.isSearch = true;
+        this.scrollId = '';
+        this.distance = dis;
+        this.searchCoord = coord;
+        this.tweetReq.open('GET', '/tweet/searchGeo/' + dis + '/' + coord);
+        this.tweetReq.send();
+        this.clearMap();
+        this.clearReqInterval();
+        this.setSearchGeoReqInterval();
+    }
+
     setReqInterval() {
         this.reqInterval = setInterval(()=> {
             this.tweetReq.open('GET', '/tweet/' + (this.lastId == '' ? 'null' : this.lastId));
@@ -167,6 +185,13 @@ class Tweets {
     setSearchReqInterval() {
         this.reqInterval = setInterval(()=> {
             this.tweetReq.open('GET', '/tweet/search/' + this.searchText + '/' + this.scrollId);
+            this.tweetReq.send();
+        }, 10000);
+    }
+
+    setSearchGeoReqInterval(dis, coord) {
+        this.reqInterval = setInterval(()=> {
+            this.tweetReq.open('GET', '/tweet/searchGeo/' + this.distance + '/' + this.searchCoord + '/' + this.scrollId);
             this.tweetReq.send();
         }, 10000);
     }
@@ -197,9 +222,7 @@ class Tweets {
     }
 
     reset() {
-        console.log(this.isSearch, this.backupTweets);
         this.clearMap();
-
         if (this.isSearch) {
             this.searchText = '';
             this.searchTotal = 0;
@@ -210,6 +233,11 @@ class Tweets {
             this.remainTweets = this.backupTweets;
             this.backupTweets = {};
         }
+    }
+
+
+    getSearchText() {
+        return this.searchText;
     }
 
 }

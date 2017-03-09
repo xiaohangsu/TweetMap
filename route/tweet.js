@@ -29,7 +29,11 @@ router.get('/tweet/:id', function*() {
     this.body = yield tweetsQueue.search(this.params.text);
 
 }).get('/tweet/search/:text/:scrollId', function*() {
-    this.body = yield tweetsQueue.scroll(this.params.text, this.params.scrollId);
+    this.body = yield tweetsQueue.scroll(this.params.scrollId);
+
+}).get('/tweet/searchGeo/:dis/:coord', function*() {
+    console.log(this.params);
+    this.body = yield tweetsQueue.searchGeo(this.params.dis, this.params.coord);
 });
 
 module.exports = router;
