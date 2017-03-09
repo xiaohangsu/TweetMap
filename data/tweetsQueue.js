@@ -209,7 +209,7 @@ class TweetsQueue {
 
     hasNew(id) {
         console.log(id, this.count);
-        return this.count != parseInt(id);
+        return this.count - 1 != parseInt(id);
     }
 }
 
