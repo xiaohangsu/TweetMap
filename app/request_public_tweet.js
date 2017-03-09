@@ -12,7 +12,7 @@ class Tweets {
                 this.searchTotal = json.total;
                 json = json.data;
             }
-            console.log(json);
+            console.log(this.remainTweets.markers.length);
 
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
@@ -85,8 +85,6 @@ class Tweets {
                     this.remainTweets.markers.shift();
                     this.tweets.markers.push(marker);
                     this.markerCluster.addMarker(marker);
-
-                    //marker.setMap(googleMap);
                 }
             }
         }, 400);
