@@ -7,12 +7,14 @@ class Tweets {
 
             let json = JSON.parse(this.tweetReq.responseText);
             // process : if is searching text
+            console.log(json);
+
             if (json.data != undefined) {
                 if (json.scrollId != undefined) this.scrollId = json.scrollId;
+                else this.clearReqInterval();
                 this.searchTotal = json.total;
                 json = json.data;
             }
-            console.log(this.remainTweets.markers.length);
 
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};

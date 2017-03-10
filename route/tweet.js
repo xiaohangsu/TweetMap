@@ -32,8 +32,10 @@ router.get('/tweet/:id', function*() {
     this.body = yield tweetsQueue.scroll(this.params.scrollId);
 
 }).get('/tweet/searchGeo/:dis/:coord', function*() {
-    console.log(this.params);
     this.body = yield tweetsQueue.searchGeo(this.params.dis, this.params.coord);
+    
+}).get('/tweet/searchGeo/:dis/:coord/:scrollId', function*() {
+    this.body = yield tweetsQueue.scroll(this.params.scrollId);
 });
 
 module.exports = router;
