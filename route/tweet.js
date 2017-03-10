@@ -1,5 +1,5 @@
 const router       = require('koa-router')();
-let tweetsStream = require('../data/tweetsStream');
+let tweetsStream   = require('../data/tweetsStream');
 let tweetsQueue    = require('../data/tweetsQueue');
 
 
@@ -33,7 +33,7 @@ router.get('/tweet/:id', function*() {
 
 }).get('/tweet/searchGeo/:dis/:coord', function*() {
     this.body = yield tweetsQueue.searchGeo(this.params.dis, this.params.coord);
-    
+
 }).get('/tweet/searchGeo/:dis/:coord/:scrollId', function*() {
     this.body = yield tweetsQueue.scroll(this.params.scrollId);
 });
