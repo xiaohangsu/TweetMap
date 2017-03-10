@@ -201,17 +201,10 @@ class Tweets {
     }
 
     clearMap() {
-        const clearMarkers = ()=> {
-            for (let i = 0; i < this.tweets.markers.length; i++) {
-                this.tweets.markers[i].setMap(null);
-            }
-        };
-
         const clearCluster = ()=> {
             this.markerCluster.clearMarkers();
         };
 
-        clearMarkers();
         clearCluster();
         this.tweets = {
             markers: []
