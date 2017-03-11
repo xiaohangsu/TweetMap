@@ -1,6 +1,6 @@
-const tweetsQueueConfig = require('./../config').tweetsQueue;
+const ELASTICSEARCH_URL  = require('./../config').elasticSearchURL;
 const elasticSearch     = new (require('elasticsearch').Client)({
-    host: 'search-twittmapcloudcomputing-kvqidg2u6ryngi3bztehxkjjnq.us-east-1.es.amazonaws.com'
+    host: ELASTICSEARCH_URL
 });
 
 class TweetsQueue {

@@ -8,9 +8,7 @@ const config = {
         },
         signatureMethod: 'HMAC-SHA1'
     },
-    tweetsQueue: {
-        QueueMaxSize: 50000
-    }
+    elasticSearchURL: 'search-twittmapcloudcomputing-kvqidg2u6ryngi3bztehxkjjnq.us-east-1.es.amazonaws.com'
 };
 
 module.exports = config;
