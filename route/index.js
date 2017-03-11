@@ -6,7 +6,6 @@ router.get('/', function*(){
     yield send(this, './index.html');
 });
 
-
 router.get('/dist/bundle.js', function*(){
     yield send(this, './dist/bundle.js');
 });

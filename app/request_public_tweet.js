@@ -7,7 +7,6 @@ class Tweets {
 
             let json = JSON.parse(this.tweetReq.responseText);
             // process : if is searching text
-            console.log(json);
 
             if (json.data != undefined) {
                 if (json.scrollId != undefined) this.scrollId = json.scrollId;
