@@ -1,9 +1,17 @@
-const koa   = require('koa');
-const send = require('koa-send');
-const app   = koa();
+const Koa   = require('koa');
+const views = require('koa-views');
+
+const app   = new Koa();
+app.use(views(__dirname,{
+    map: {
+        html: 'ejs'
+    }
+}));
+
 
 const index  = require('./route/index');
 const tweet  = require('./route/tweet');
+
 
 app
     .use(index.routes())

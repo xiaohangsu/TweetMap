@@ -1,9 +1,11 @@
-var app    = require('koa')();
-var router = require('koa-router')();
-var send   = require('koa-send');
+const router       = require('koa-router')();
+const send         = require('koa-send');
+const GOOGLEMAPAPI = require('../config').GoogleMapAPI;
 
-router.get('/', function*(){
-    yield send(this, './index.html');
+router.get('/', function*() {
+    yield this.render('./index', {
+        googleMapAPI: GOOGLEMAPAPI
+    });
 });
 
 router.get('/dist/bundle.js', function*(){
