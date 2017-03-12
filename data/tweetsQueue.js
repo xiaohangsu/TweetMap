@@ -6,31 +6,35 @@ const elasticSearch     = new (require('elasticsearch').Client)({
 class TweetsQueue {
     constructor() {
         this.elasticSearch = elasticSearch;
-        this.elasticSearch.indices.delete({
-            index:'*'
-        });
         this.count = -1;
-        this.elasticSearch.indices.create({
-            index: 'twitter'
+        this.elasticSearch.indices.delete({
+            index:'twitter'
         }).then((res)=> {
-            return this.elasticSearch.indices.putMapping({
-                type:'tweet',
-                index:'twitter',
-                body: {
-                    'tweet': {
-                        'properties': {
-                            'tweet.coordinates': {
-                                'type': 'geo_point'
+            this.elasticSearch.indices.create({
+                index: 'twitter'
+            }).then((res)=> {
+                return this.elasticSearch.indices.putMapping({
+                    type:'tweet',
+                    index:'twitter',
+                    body: {
+                        'tweet': {
+                            'properties': {
+                                'tweet.coordinates': {
+                                    'type': 'geo_point'
+                                }
                             }
                         }
                     }
-                }
+                });
+            }).then((res)=> {
+                console.log('Create Elasticsearch Mapping: ', res);
+            }, (err)=> {
+                console.log('Create Elasticsearch Mapping Error: ', err);
             });
-        }).then((res)=> {
-            console.log('Create Elasticsearch Mapping: ', res);
         }, (err)=> {
-            console.log('Create Elasticsearch Mapping Error: ', err);
+            console.log('delete Index:', err);
         });
+
     }
 
     tweet(json) {

@@ -1,6 +1,8 @@
-const router       = require('koa-router')();
+const Router       = require('koa-router');
 const send         = require('koa-send');
 const GOOGLEMAPAPI = require('../config').GoogleMapAPI;
+
+const router = new Router();
 
 router.get('/', function*() {
     yield this.render('./index', {
