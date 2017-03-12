@@ -21,7 +21,16 @@ let x = {
     distance: '',
     isSearchText: false,
     isSearchDis: false,
-    isSelectPoint: false
+    isSelectPoint: false,
+    coordinates: [],
+    circle: new google.maps.Circle({
+        strokeColor: '#3a87ea',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#f1dbb9',
+        fillOpacity: 0.35,
+        map: googleMap
+    })
 };
 
 googleMap.addListener('click', (event)=> {
@@ -30,7 +39,14 @@ googleMap.addListener('click', (event)=> {
         x.isSelectPoint = true;
         x.isSearchText = false;
         x.isSearchDis = false;
+        x.coordinates = [coordinate[0].toFixed(2), coordinate[1].toFixed(2)];
         tweets.searchDis(x.distance, coordinate);
+        x.circle.setCenter({
+            lat: coordinate[0],
+            lng: coordinate[1]
+        });
+        x.circle.setRadius(parseInt(x.distance) * 1000);
+        x.circle.setMap(googleMap);
     }
 });
 
@@ -76,6 +92,7 @@ Vue.component('bottom-control', {
             x.isSearchDis = false;
             x.isSearchText = false;
             x.isSelectPoint = false;
+            x.circle.setMap(null);
 
         }
     }
@@ -99,13 +116,13 @@ Vue.component('top-right-control', {
             </button>\
         </div>\
         <div class="input-group" v-show="x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon">Select A point on Map</span>\
+            <div class="alert alert-warning" role="alert">Select A point on Map</div>\
         </div>\
         <div class="input-group" v-show="!x.isSearchDis && x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon">Search: {{ x.searchText }}</span>\
+            <div class="alert alert-success" role="alert">Search Keywords: {{ x.searchText }}</div>\
         </div>\
         <div class="input-group" v-show="!x.isSearchDis && !x.isSearchText && x.isSelectPoint">\
-            <span class="input-group-addon">Show points with distance: {{ x.distance }}</span>\
+            <div class="alert alert-success" role="alert">Show point ({{x.coordinates[0] + ", " + x.coordinates[1]}}) with distance: {{ x.distance }}</div>\
         </div>\
     </div>',
     data: ()=> {
