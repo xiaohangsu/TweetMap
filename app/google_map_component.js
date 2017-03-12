@@ -100,20 +100,21 @@ Vue.component('bottom-control', {
 
 // TOP_RIGHT Component: key words search bar
 Vue.component('top-right-control', {
-    template: '\
-    <div id="search-form">\
-        <div class="input-group" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon" id="basic-addon1">Keywords</span>\
-            <input type="text" class="form-control" placeholder="keywords" v-model="x.searchText" aria-describedby="basic-addon1"/>\
-            <button class="btn" v-bind:class="{\'btn-default\': !x.isSearchText, \'btn-success\': x.isSearchText}" v-on:click="search()" type="button">\
-                <span class="glyphicon glyphicon-search"></span></button>\
-        </div>\
-        <div class="input-group" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon" id="basic-addon2">Distances</span>\
-            <input type="text" class="form-control" placeholder="/km" v-model="x.distance" aria-describedby="basic-addon2"/>\
-            <button class="btn" v-bind:class="{\'btn-default\': !x.isSelectPoint, \'btn-success\': x.isSelectPoint}" v-on:click="searchDis()" type="button">\
-                <span class="glyphicon glyphicon-record"></span>\
-            </button>\
+    template: '<div>\
+        <div id="search-form">\
+            <div class="input-group search-bar" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
+                <span class="input-group-addon" id="basic-addon1">Keywords</span>\
+                <input type="text" class="form-control" placeholder="keywords" v-model="x.searchText" aria-describedby="basic-addon1"/>\
+                <button class="btn" v-bind:class="{\'btn-default\': !x.isSearchText, \'btn-success\': x.isSearchText}" v-on:click="search()" type="button">\
+                    <span class="glyphicon glyphicon-search"></span></button>\
+            </div>\
+            <div class="input-group search-bar" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
+                <span class="input-group-addon" id="basic-addon2">Distances</span>\
+                <input type="text" class="form-control" placeholder="/km" v-model="x.distance" aria-describedby="basic-addon2"/>\
+                <button class="btn" v-bind:class="{\'btn-default\': !x.isSelectPoint, \'btn-success\': x.isSelectPoint}" v-on:click="searchDis()" type="button">\
+                    <span class="glyphicon glyphicon-record"></span>\
+                </button>\
+            </div>\
         </div>\
         <div class="input-group" v-show="x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
             <div class="alert alert-warning" role="alert">Select A point on Map</div>\
@@ -124,7 +125,7 @@ Vue.component('top-right-control', {
         <div class="input-group" v-show="!x.isSearchDis && !x.isSearchText && x.isSelectPoint">\
             <div class="alert alert-success" role="alert">Show point ({{x.coordinates[0] + ", " + x.coordinates[1]}}) with distance: {{ x.distance }}</div>\
         </div>\
-    </div>',
+    <div>',
     data: ()=> {
         return {
             tweets: tweets,

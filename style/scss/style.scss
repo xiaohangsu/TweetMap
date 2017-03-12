@@ -106,7 +106,16 @@ html, body {
         margin-bottom: 5px;
     }
 
+
+
     #top-right-control {
+        #search-form {
+            position: fixed !important;
+            right: -94px !important;
+            top: 2px !important;
+        }
+
+
         right: -10%;
         input {
             display: inline-block;
