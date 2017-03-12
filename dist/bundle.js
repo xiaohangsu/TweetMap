@@ -82,7 +82,6 @@ class Tweets {
 
             let json = JSON.parse(this.tweetReq.responseText);
             // process : if is searching text
-            console.log(json);
 
             if (json.data != undefined) {
                 if (json.scrollId != undefined) this.scrollId = json.scrollId;
@@ -356,7 +355,16 @@ let x = {
     distance: '',
     isSearchText: false,
     isSearchDis: false,
-    isSelectPoint: false
+    isSelectPoint: false,
+    coordinates: [],
+    circle: new google.maps.Circle({
+        strokeColor: '#3a87ea',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#f1dbb9',
+        fillOpacity: 0.35,
+        map: __WEBPACK_IMPORTED_MODULE_1__google_map___default.a
+    })
 };
 
 __WEBPACK_IMPORTED_MODULE_1__google_map___default.a.addListener('click', (event)=> {
@@ -365,7 +373,14 @@ __WEBPACK_IMPORTED_MODULE_1__google_map___default.a.addListener('click', (event)
         x.isSelectPoint = true;
         x.isSearchText = false;
         x.isSearchDis = false;
+        x.coordinates = [coordinate[0].toFixed(2), coordinate[1].toFixed(2)];
         __WEBPACK_IMPORTED_MODULE_3__request_public_tweet__["a" /* default */].searchDis(x.distance, coordinate);
+        x.circle.setCenter({
+            lat: coordinate[0],
+            lng: coordinate[1]
+        });
+        x.circle.setRadius(parseInt(x.distance) * 1000);
+        x.circle.setMap(__WEBPACK_IMPORTED_MODULE_1__google_map___default.a);
     }
 });
 
@@ -411,6 +426,7 @@ __WEBPACK_IMPORTED_MODULE_0__vue___default.a.component('bottom-control', {
             x.isSearchDis = false;
             x.isSearchText = false;
             x.isSelectPoint = false;
+            x.circle.setMap(null);
 
         }
     }
@@ -418,31 +434,32 @@ __WEBPACK_IMPORTED_MODULE_0__vue___default.a.component('bottom-control', {
 
 // TOP_RIGHT Component: key words search bar
 __WEBPACK_IMPORTED_MODULE_0__vue___default.a.component('top-right-control', {
-    template: '\
-    <div id="search-form">\
-        <div class="input-group" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon" id="basic-addon1">Keywords</span>\
-            <input type="text" class="form-control" placeholder="keywords" v-model="x.searchText" aria-describedby="basic-addon1"/>\
-            <button class="btn" v-bind:class="{\'btn-default\': !x.isSearchText, \'btn-success\': x.isSearchText}" v-on:click="search()" type="button">\
-                <span class="glyphicon glyphicon-search"></span></button>\
-        </div>\
-        <div class="input-group" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon" id="basic-addon2">Distances</span>\
-            <input type="text" class="form-control" placeholder="/km" v-model="x.distance" aria-describedby="basic-addon2"/>\
-            <button class="btn" v-bind:class="{\'btn-default\': !x.isSelectPoint, \'btn-success\': x.isSelectPoint}" v-on:click="searchDis()" type="button">\
-                <span class="glyphicon glyphicon-record"></span>\
-            </button>\
+    template: '<div>\
+        <div id="search-form">\
+            <div class="input-group search-bar" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
+                <span class="input-group-addon" id="basic-addon1">Keywords</span>\
+                <input type="text" class="form-control" placeholder="keywords" v-model="x.searchText" aria-describedby="basic-addon1"/>\
+                <button class="btn" v-bind:class="{\'btn-default\': !x.isSearchText, \'btn-success\': x.isSearchText}" v-on:click="search()" type="button">\
+                    <span class="glyphicon glyphicon-search"></span></button>\
+            </div>\
+            <div class="input-group search-bar" v-show="!x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
+                <span class="input-group-addon" id="basic-addon2">Distances</span>\
+                <input type="text" class="form-control" placeholder="/km" v-model="x.distance" aria-describedby="basic-addon2"/>\
+                <button class="btn" v-bind:class="{\'btn-default\': !x.isSelectPoint, \'btn-success\': x.isSelectPoint}" v-on:click="searchDis()" type="button">\
+                    <span class="glyphicon glyphicon-record"></span>\
+                </button>\
+            </div>\
         </div>\
         <div class="input-group" v-show="x.isSearchDis && !x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon">Select A point on Map</span>\
+            <div class="alert alert-warning" role="alert">Select A point on Map</div>\
         </div>\
         <div class="input-group" v-show="!x.isSearchDis && x.isSearchText && !x.isSelectPoint">\
-            <span class="input-group-addon">Search: {{ x.searchText }}</span>\
+            <div class="alert alert-success" role="alert">Search Keywords: {{ x.searchText }}</div>\
         </div>\
         <div class="input-group" v-show="!x.isSearchDis && !x.isSearchText && x.isSelectPoint">\
-            <span class="input-group-addon">Show points with distance: {{ x.distance }}</span>\
+            <div class="alert alert-success" role="alert">Show point ({{x.coordinates[0] + ", " + x.coordinates[1]}}) with distance: {{ x.distance }}</div>\
         </div>\
-    </div>',
+    <div>',
     data: ()=> {
         return {
             tweets: __WEBPACK_IMPORTED_MODULE_3__request_public_tweet__["a" /* default */],

@@ -73,6 +73,10 @@ html, body {
     margin-bottom: 5px; }
   html #top-right-control, body #top-right-control {
     right: -10%; }
+    html #top-right-control #search-form, body #top-right-control #search-form {
+      position: fixed !important;
+      right: -94px !important;
+      top: 2px !important; }
     html #top-right-control input, body #top-right-control input {
       display: inline-block;
       width: 37%; }
@@ -81,3 +85,5 @@ html, body {
       margin-left: -4px; }
     html #top-right-control .input-group-addon:first-child, body #top-right-control .input-group-addon:first-child {
       width: 30%; }
+    html #top-right-control .alert, body #top-right-control .alert {
+      font-size: 13px; }
