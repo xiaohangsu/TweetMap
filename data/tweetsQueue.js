@@ -10,6 +10,7 @@ class TweetsQueue {
             index:'*'
         });
         this.count = -1;
+        
         this.elasticSearch.indices.create({
             index: 'twitter'
         }).then((res)=> {
