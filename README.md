@@ -47,7 +47,7 @@ elasticSearchURL: (elasticSearchURL or host)
 
 GoogleMapAPI: your google Map API
 ```
-c
+
 ## Depolyment
 * AWS EC2 for Elasticsearch
 * AWS Elasticbeanstalk for web application
