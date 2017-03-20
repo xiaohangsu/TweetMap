@@ -75,7 +75,7 @@ class TweetsStream {
         });
 
         let request_data = {
-            url: 'https://stream.twitter.com/1.1/statuses/filter.json?locations=-180.0,-90.0,180.0,90.0',
+            url: 'https://stream.twitter.com/1.1/statuses/filter.json?filter_level=low&locations=-180.0,-90.0,180.0,90.0',
             method: 'POST',
             headers: {
             }
