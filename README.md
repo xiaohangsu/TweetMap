@@ -56,8 +56,10 @@ Tweets Size can automatically delete older data to keep elasticsearch disk usage
 * AWS Elasticbeanstalk for web application
 
 ##Feature
+
 ### App Feature
 * live-stream tweets
+
 
 <p align="center">
   <img src='https://xiaohangsu.files.wordpress.com/2017/03/screen-shot-2017-03-12-at-6-55-01-pm.png'/>
@@ -66,6 +68,7 @@ Tweets Size can automatically delete older data to keep elasticsearch disk usage
 * search for keywords
 * search for a select point within given distance
 * change map layout Standard Silver Retro Dark Night Aubergine
+
 <p align="center">
   <img src='https://xiaohangsu.files.wordpress.com/2017/03/screen-shot-2017-03-12-at-7-02-14-pm.png'/>
 </p>
