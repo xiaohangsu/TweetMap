@@ -1,5 +1,6 @@
 const ELASTICSEARCH_URL  = require('./../config').elasticSearchURL;
-const elasticSearch     = new (require('elasticsearch').Client)({
+const TWEETS_SIZE        = require('./../config').tweetsSize;
+const elasticSearch      = new (require('elasticsearch').Client)({
     host: ELASTICSEARCH_URL
 });
 
@@ -61,7 +62,14 @@ class TweetsQueue {
             body: this.tweet(json),
             id: this.count++
         }).then((response)=>{
-            console.log('Document added. id: ', this.count);
+
+            if (this.count % 500 === 0) {
+                console.log('Document added. id: ', this.count);
+            }
+
+            if (this.count % TWEETS_SIZE === 0) {
+                this.shrinkIndex(this.count);
+            }
         }, (err)=>{
             console.log(err.message);
         });
@@ -213,6 +221,25 @@ class TweetsQueue {
     hasNew(id) {
         console.log(id, this.count);
         return this.count - 1 != parseInt(id);
+    }
+
+    shrinkIndex(currentCount) {
+        return this.elasticSearch.deleteByQuery({
+            index: 'twitter',
+            body: {
+                'query': {
+                    'range': {
+                        'tweet.id': {
+                            'lt': currentCount - TWEETS_SIZE
+                        }
+                    }
+                }
+            }
+        }, (res)=> {
+            console.log('Shrinking Index before: ', currentCount - TWEETS_SIZE);
+        }, (err)=> {
+            console.error('Shrinking Index ERROR: ', err);
+        });
     }
 }
 
