@@ -46,7 +46,10 @@ tweetOauth
 elasticSearchURL: (elasticSearchURL or host)
 
 GoogleMapAPI: your google Map API
+
+tweetsSize: fixed Index size once you set up
 ```
+Tweets Size can automatically delete older data to keep elasticsearch disk usage in a controlled level.
 
 ## Depolyment
 * AWS EC2 for Elasticsearch
