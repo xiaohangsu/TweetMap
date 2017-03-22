@@ -6,7 +6,7 @@ let createTweetsStreamTimeoutId = 0;
 let timeoutSet = false;
 router.get('/tweet/:id', function*() {
     let id = parseInt(this.params.id);
-    //if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
+    if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
         if (!timeoutSet) {
             createTweetsStreamTimeoutId = setTimeout(()=>{
                 tweetsStream.createTweetsStreamingReq();
@@ -15,9 +15,9 @@ router.get('/tweet/:id', function*() {
             console.log('Create a new Tweet Stream in minutes...');
             timeoutSet = true;
         }
-    //} else {
-    //    clearTimeout(createTweetsStreamTimeoutId);
-    //}
+    } else {
+        clearTimeout(createTweetsStreamTimeoutId);
+    }
 
     if (isNaN(id)) {
         this.body = yield tweetsQueue.getTopk(100);
