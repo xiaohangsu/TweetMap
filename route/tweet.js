@@ -2,13 +2,23 @@ const router       = require('koa-router')();
 let tweetsStream   = require('../data/tweetsStream');
 let tweetsQueue    = require('../data/tweetsQueue');
 
-
+let createTweetsStreamTimeoutId = 0;
+let timeoutSet = false;
 router.get('/tweet/:id', function*() {
     let id = parseInt(this.params.id);
-    console.log(!tweetsQueue.hasNew(id));
-    if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
-        tweetsStream.createTweetsStreamingReq();
-    }
+    //if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
+        if (!timeoutSet) {
+            createTweetsStreamTimeoutId = setTimeout(()=>{
+                tweetsStream.createTweetsStreamingReq();
+                timeoutSet = false;
+            }, 300000);
+            console.log('Create a new Tweet Stream in minutes...');
+            timeoutSet = true;
+        }
+    //} else {
+    //    clearTimeout(createTweetsStreamTimeoutId);
+    //}
+
     if (isNaN(id)) {
         this.body = yield tweetsQueue.getTopk(100);
     } else {
