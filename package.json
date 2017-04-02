@@ -8,7 +8,7 @@
     "run": "nodemon app.js --config nodemon.config.json"
   },
   "author": "XiaohangSu",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "css-loader": "^0.26.1",
     "eslint": "^3.16.1",

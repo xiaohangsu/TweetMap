@@ -3,9 +3,8 @@ const crypto      = require('crypto');
 const stream      = require('stream');
 const request     = require('request');
 const tweetOauth  = require('../config').tweetOauth;
-
+const pm2         = require('pm2');
 let tweetsQueue   = require('../data/tweetsQueue');
-
 
 class TweetsStream {
     constructor() {
@@ -20,13 +19,13 @@ class TweetsStream {
                     return str;
                 }
             };
-
             let buffer = (Buffer.isBuffer(chunk)) ? chunk : new Buffer(chunk, enc);
             let json = isJSON(this.lastString + buffer.toString('utf-8').substring(-1));
             if (typeof json == String) {
                 this.lastString += json;
             } else {
                 if (json['coordinates'] != null || json['coordinates'] != undefined) {
+
                     tweetsQueue.addTweet(json);
                 }
                 this.lastString = '';
@@ -47,6 +46,9 @@ class TweetsStream {
         this.tweetsStream.on('finish', ()=>{
             this.isConnected = false;
             console.log('tweetStream Finish');
+            pm2.restart('TweetsMap', ()=> {
+                console.log('Restart');
+            });
         });
         this.tweetsStream.on('unpipe', (obj)=>{
             console.log('tweetStream Unpipe', obj);
@@ -62,7 +64,7 @@ class TweetsStream {
     }
 
     createTweetsStreamingReq() {
-        console.log('Create TweetsStreaming Requst....');
+
         let oauth = OAuth({
             consumer: {
                 key: tweetOauth.key,
@@ -87,6 +89,7 @@ class TweetsStream {
         };
 
         this.isConnected = true;
+
         return request({
             url: request_data.url,
             method: request_data.method,
@@ -100,6 +103,7 @@ class TweetsStream {
     isLostConnection() {
         return !this.isConnected;
     }
+
 }
 
 const tweetsStream = new TweetsStream();
