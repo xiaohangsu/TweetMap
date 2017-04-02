@@ -1,4 +1,6 @@
 # TweetMap
+[![Build Status](https://travis-ci.org/xiaohangsu/TweetMap.svg?branch=master)](https://travis-ci.org/xiaohangsu/TweetMap)
+
 Real-time streaming Tweets showing on Google Map.
 <p align="center">
   <img src='https://xiaohangsu.files.wordpress.com/2017/03/screen-shot-2017-03-12-at-6-52-01-pm.png?w=1476'/>
