@@ -8,6 +8,3 @@ script:
   npm run run &
 services:
   - elasticsearch
-deploy:
-  provider: script
-  script: pm2 start app.js --name TweetsMap &
