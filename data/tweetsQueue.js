@@ -63,7 +63,7 @@ class TweetsQueue {
             id: this.count++
         }).then((response)=>{
 
-            if (this.count % 5 === 0) {
+            if (this.count % 5000 === 0) {
                 console.log('Document added. id: ', this.count);
             }
 
