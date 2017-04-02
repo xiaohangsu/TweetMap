@@ -5,7 +5,7 @@ before_script:
   - npm install -g pm2
 script:
   npm run build &
-  npm run run
+  npm run run &
 services:
   - elasticsearch
 deploy:
