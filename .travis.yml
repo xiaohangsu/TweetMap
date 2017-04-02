@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - "7"
+before_script:
+  - npm install -g pm2
+script:
+  npm run build &
+  npm run run
+services:
+  - elasticsearch
+deploy:
+  provider: script
+  script: pm2 start app.js --name TweetsMap
