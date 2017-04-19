@@ -1,5 +1,36 @@
 import googleMap from './google_map';
 
+
+let grayIcon = {
+    url: 'http://localhost:8081/dist/markers.png',
+    size: new google.maps.Size(25,35),
+    origin: new google.maps.Point(138, 42),
+    anchor: new google.maps.Point(0, 0),
+    scaledSize: new google.maps.Size(200, 80)
+};
+
+let blackIcon = {
+    url: 'http://localhost:8081/dist/markers.png',
+    size: new google.maps.Size(25,35),
+    origin: new google.maps.Point(38, 2),
+    anchor: new google.maps.Point(0, 0),
+    scaledSize: new google.maps.Size(200, 80)
+};
+
+let orangeIcon = {
+    url: 'http://localhost:8081/dist/markers.png',
+    size: new google.maps.Size(25,35),
+    origin: new google.maps.Point(5, 42),
+    anchor: new google.maps.Point(0, 0),
+    scaledSize: new google.maps.Size(200, 80)
+};
+
+let icon = (label)=> {
+    if (label == 'positive') return orangeIcon;
+    if (label == 'negative') return blackIcon;
+    else return grayIcon;
+}
+
 class Tweets {
     constructor() {
         let tweetsOnLoadEvent = ()=> {
@@ -17,7 +48,9 @@ class Tweets {
 
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
+
                 let marker = new google.maps.Marker({
+                    icon: icon(json[i].label),
                     position: latlng
                 });
                 this.lastId = json[i].id;

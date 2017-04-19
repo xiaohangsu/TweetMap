@@ -10,7 +10,7 @@ for (let i in googleMapStyle.ids) {
     googleMap.setMapTypeId(googleMapStyle.ids[i]);
 }
 
-googleMap.setMapTypeId('Standard');
+googleMap.setMapTypeId('Aubergine');
 
 
 

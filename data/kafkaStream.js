@@ -16,7 +16,6 @@ class KafkaStream {
             }, ['twitterstream']
         );
         this.consumerGroup.on('message', (message)=> {
-            console.log(message.value);
             tweetsQueue.addTweet(JSON.parse(message.value));
         });
 
