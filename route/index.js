@@ -18,13 +18,16 @@ router.get('/', (ctx, next)=> {
     });
 });
 
-router.get('/dist/bundle.js', function*(){
-    yield send(this, './dist/bundle.js');
+router.get('/dist/bundle.js', async (ctx)=> {
+    return await send(ctx, './dist/bundle.js');
 });
 
-router.get('/dist/main.min.css', function*(){
-    yield send(this, './dist/main.min.css');
+router.get('/dist/main.min.css', async(ctx)=> {
+    return await send(ctx, './dist/main.min.css');
 });
 
+router.get('/dist/markers.png', async(ctx)=> {
+    return await send(ctx, './dist/markers.png');
+});
 
 module.exports = router;
