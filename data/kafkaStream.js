@@ -26,7 +26,7 @@ class KafkaStream {
             console.log('KafkaStream - Message', err);
         });
     }
-};
+}
 
 const kafkaStream = new KafkaStream();
 
