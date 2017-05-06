@@ -1,11 +1,18 @@
 const router       = require('koa-router')();
 let tweetsStream   = require('../data/tweetsStream');
 let tweetsQueue    = require('../data/tweetsQueue');
-
+const pm2          = require('pm2');
+let RESTART_TIMEOUT= 0;
 router.get('/tweet/:id', function*() {
     let id = parseInt(this.params.id);
     if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
-        tweetsStream.createTweetsStreamingReq();
+        RESTART_TIMEOUT = setTimeout(()=> {
+            pm2.restart('TweetsMap', ()=> {
+                console.log('Restart');
+            });
+        }, 100000);
+    } else {
+        clearTimeout(RESTART_TIMEOUT);
     }
 
     if (isNaN(id)) {
