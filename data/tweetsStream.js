@@ -46,9 +46,7 @@ class TweetsStream {
         this.tweetsStream.on('finish', ()=>{
             this.isConnected = false;
             console.log('tweetStream Finish');
-            pm2.restart('TweetsMap', ()=> {
-                console.log('Restart');
-            });
+
         });
         this.tweetsStream.on('unpipe', (obj)=>{
             console.log('tweetStream Unpipe', obj);
@@ -64,7 +62,9 @@ class TweetsStream {
     }
 
     createTweetsStreamingReq() {
-
+        pm2.restart('TweetsMap', ()=> {
+            console.log('Restart');
+        });
         let oauth = OAuth({
             consumer: {
                 key: tweetOauth.key,

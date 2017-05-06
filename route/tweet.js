@@ -6,7 +6,6 @@ router.get('/tweet/:id', function*() {
     let id = parseInt(this.params.id);
     if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
         tweetsStream.createTweetsStreamingReq();
-        console.log('Create a new Tweet Stream in minutes...');
     }
 
     if (isNaN(id)) {
