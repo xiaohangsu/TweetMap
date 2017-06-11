@@ -4,12 +4,13 @@ class TweetsQueue {
     constructor() {
         this.tweets = [];
         this.tweetIdMap = {};
+        this.count = 0;
     }
 
     tweet(json) {
         return {
             tweet: {
-                id: this.count,
+                id: this.count++,
                 coordinates: json.coordinates.coordinates
             },
             tweetDetail: {
@@ -25,19 +26,19 @@ class TweetsQueue {
     }
 
     addTweet(json) {
-        if (this.tweets.length === TWEETS_SIZE) {
+        if (this.count % TWEETS_SIZE === TWEETS_SIZE - 1) {
             delete this.tweetIdMap[this.tweets[0].tweet.id];
             this.tweets.shift();
 
         }
 
-        if (this.tweets.length % 10 === 0) {
+        if (this.count % 5000 === 0) {
             console.log(this.tweets.length);
         }
+
         let tweet = this.tweet(json);
         this.tweetIdMap[tweet.tweet.id] = this.tweets.length;
         this.tweets.push(tweet);
-
     }
 
     // get Brief of id and Coordinates
@@ -48,19 +49,17 @@ class TweetsQueue {
         });
     }
 
+    getNewTweetsDownToId(id) {
+        let tweetStartIndex = this.count - id + 1 > 50 ? this.count - 50 : this.count - id + 1;
+        return this.tweets.slice(tweetStartIndex).map((obj)=> {
+            return obj.tweet;
+        });
+    }
+
 
     // get Tweet Detail info
     getTweetDetail(id) {
-        return this.elasticSearch.get({
-            type:'tweet', 
-            index: 'twitter',
-            id: id
-        }).then((res)=> {
-            return res['_source'].tweetDetail;
-        }, (err)=> {
-            console.log(err);
-            return err;
-        });
+        return this.tweets[this.tweetIdMap[id]].tweetDetail;
     }
 
     search(text) {
@@ -73,10 +72,6 @@ class TweetsQueue {
     }
 
     searchGeo(dis, coord) {
-    }
-
-    getShrink() {
-
     }
 
     hasNew(id) {

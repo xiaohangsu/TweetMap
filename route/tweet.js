@@ -2,50 +2,38 @@ const router       = require('koa-router')();
 let tweetsStream   = require('../data/tweetsStream');
 let tweetsQueue    = require('../data/tweetsQueue');
 
-let createTweetsStreamTimeoutId = 0;
-let timeoutSet = false;
-router.get('/tweet/:id', function*() {
-    let id = parseInt(this.params.id);
-    if (tweetsStream.isLostConnection() || !tweetsQueue.hasNew(id)) {
-        if (!timeoutSet) {
-            createTweetsStreamTimeoutId = setTimeout(()=>{
-                tweetsStream.createTweetsStreamingReq();
-                timeoutSet = false;
-            }, 300000);
-            console.log('Create a new Tweet Stream in minutes...');
-            timeoutSet = true;
-        }
-    } else {
-        clearTimeout(createTweetsStreamTimeoutId);
-    }
+router.get('/tweet/:id', (ctx)=> {
+    let id = parseInt(ctx.params.id);
+    console.log(`/tweet/${id} | IP ${ctx.ip}`);
 
     if (isNaN(id)) {
-        this.body = yield tweetsQueue.getTopk(100);
+        ctx.body = tweetsQueue.getTopk(100);
     } else {
-        this.body = yield tweetsQueue.getNewTweetsDownToId(id);
+        ctx.body = tweetsQueue.getNewTweetsDownToId(id);
     }
 
 
-}).get('/tweetDetail/:id', function*() {
-    let id = parseInt(this.params.id);
+}).get('/tweetDetail/:id', (ctx)=> {
+    let id = parseInt(ctx.params.id);
+    console.log(`/tweetDetail/${id} | IP ${ctx.ip}`);
     if (!isNaN(id)) {
-        this.body = yield tweetsQueue.getTweetDetail(this.params.id);
+        ctx.body = tweetsQueue.getTweetDetail(ctx.params.id);
     } else {
         console.log('/TweetDetail/'+ id + ' NOT FOUND');
     }
 
 
-}).get('/tweet/search/:text', function*() {
-    this.body = yield tweetsQueue.search(this.params.text);
+}).get('/tweet/search/:text', (ctx)=> {
+    ctx.body = tweetsQueue.search(ctx.params.text);
 
-}).get('/tweet/search/:text/:scrollId', function*() {
-    this.body = yield tweetsQueue.scroll(this.params.scrollId);
+}).get('/tweet/search/:text/:scrollId', (ctx)=> {
+    ctx.body = tweetsQueue.scroll(ctx.params.scrollId);
 
-}).get('/tweet/searchGeo/:dis/:coord', function*() {
-    this.body = yield tweetsQueue.searchGeo(this.params.dis, this.params.coord);
+}).get('/tweet/searchGeo/:dis/:coord', (ctx)=> {
+    ctx.body = tweetsQueue.searchGeo(ctx.params.dis, ctx.params.coord);
 
-}).get('/tweet/searchGeo/:dis/:coord/:scrollId', function*() {
-    this.body = yield tweetsQueue.scroll(this.params.scrollId);
+}).get('/tweet/searchGeo/:dis/:coord/:scrollId', (ctx)=> {
+    ctx.body = tweetsQueue.scroll(ctx.params.scrollId);
 });
 
 module.exports = router;

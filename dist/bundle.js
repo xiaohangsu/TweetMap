@@ -75,37 +75,6 @@
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__google_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__google_map__);
 
 
-
-let grayIcon = {
-    url: 'https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-077327772237/markers.png',
-    size: new google.maps.Size(25,35),
-    origin: new google.maps.Point(138, 42),
-    anchor: new google.maps.Point(0, 0),
-    scaledSize: new google.maps.Size(200, 80)
-};
-
-let blackIcon = {
-    url: 'https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-077327772237/markers.png',
-    size: new google.maps.Size(25,35),
-    origin: new google.maps.Point(38, 2),
-    anchor: new google.maps.Point(0, 0),
-    scaledSize: new google.maps.Size(200, 80)
-};
-
-let orangeIcon = {
-    url: 'https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-077327772237/markers.png',
-    size: new google.maps.Size(25,35),
-    origin: new google.maps.Point(5, 42),
-    anchor: new google.maps.Point(0, 0),
-    scaledSize: new google.maps.Size(200, 80)
-};
-
-let icon = (label)=> {
-    if (label == 'positive') return orangeIcon;
-    if (label == 'negative') return blackIcon;
-    else return grayIcon;
-}
-
 class Tweets {
     constructor() {
         let tweetsOnLoadEvent = ()=> {
@@ -123,9 +92,7 @@ class Tweets {
 
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
-
                 let marker = new google.maps.Marker({
-                    icon: icon(json[i].label),
                     position: latlng
                 });
                 this.lastId = json[i].id;
@@ -377,10 +344,7 @@ for (let i in __WEBPACK_IMPORTED_MODULE_2__google_map_style___default.a.ids) {
     __WEBPACK_IMPORTED_MODULE_1__google_map___default.a.setMapTypeId(__WEBPACK_IMPORTED_MODULE_2__google_map_style___default.a.ids[i]);
 }
 
-__WEBPACK_IMPORTED_MODULE_1__google_map___default.a.setMapTypeId('Aubergine');
-
-
-
+__WEBPACK_IMPORTED_MODULE_1__google_map___default.a.setMapTypeId('Standard');
 
 // x is object
 let x = {

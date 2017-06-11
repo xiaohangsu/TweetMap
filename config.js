@@ -9,7 +9,7 @@ const config = {
         signatureMethod: 'HMAC-SHA1'
     },
     GoogleMapAPI: 'AIzaSyBiu0Tz1sSZ4QZJdqxLXIoPKDzKMItmEOc',
-    tweetsSize: 50000 // shrinking index size
+    tweetsSize: 500 // shrinking index size
 };
 
 module.exports = config;
