@@ -12,9 +12,6 @@ for (let i in googleMapStyle.ids) {
 
 googleMap.setMapTypeId('Standard');
 
-
-
-
 // x is object
 let x = {
     searchText: '',
