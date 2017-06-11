@@ -1,40 +1,9 @@
-const ELASTICSEARCH_URL  = require('./../config').elasticSearchURL;
 const TWEETS_SIZE        = require('./../config').tweetsSize;
-const elasticSearch      = new (require('elasticsearch').Client)({
-    host: ELASTICSEARCH_URL
-});
 
 class TweetsQueue {
     constructor() {
-        this.count = -1;
-        this.elasticSearch = elasticSearch;
-        this.elasticSearch.indices.delete({
-            index:'twitter'
-        }).then((res)=> {
-            this.elasticSearch.indices.create({
-                index: 'twitter'
-            }).then((res)=> {
-                return this.elasticSearch.indices.putMapping({
-                    type:'tweet',
-                    index:'twitter',
-                    body: {
-                        'tweet': {
-                            'properties': {
-                                'tweet.coordinates': {
-                                    'type': 'geo_point'
-                                }
-                            }
-                        }
-                    }
-                });
-            }).then((res)=> {
-                console.log('Create Elasticsearch Mapping: ', res);
-            }, (err)=> {
-                console.log('Create Elasticsearch Mapping Error: ', err);
-            });
-        }, (err)=> {
-            console.log('delete indices Error', err);
-        });
+        this.tweets = [];
+        this.tweetIdMap = {};
     }
 
     tweet(json) {
@@ -56,57 +25,29 @@ class TweetsQueue {
     }
 
     addTweet(json) {
-        this.elasticSearch.create({
-            index: 'twitter',
-            type : 'tweet',
-            body: this.tweet(json),
-            id: this.count++
-        }).then((response)=>{
+        if (this.tweets.length === TWEETS_SIZE) {
+            delete this.tweetIdMap[this.tweets[0].tweet.id];
+            this.tweets.shift();
 
-            if (this.count % 5000 === 0) {
-                console.log('Document added. id: ', this.count);
-            }
+        }
 
-            if (this.count % TWEETS_SIZE === 0) {
-                this.shrinkIndex(this.count);
-            }
-        }, (err)=>{
-            console.log(err.message);
-        });
+        if (this.tweets.length % 10 === 0) {
+            console.log(this.tweets.length);
+        }
+        let tweet = this.tweet(json);
+        this.tweetIdMap[tweet.tweet.id] = this.tweets.length;
+        this.tweets.push(tweet);
+
     }
 
     // get Brief of id and Coordinates
     getTopk(k) {
-        let startId = this.count > k ? this.count - k : 0;
-        return this.getNewTweetsDownToId(startId, k);
-    }
-
-    // get Brief info of id and Coordinates
-    getNewTweetsDownToId(pastId, max = 200) {
-        return this.elasticSearch.search({
-            type: 'tweet',
-            index: 'twitter', 
-            size: max,
-            body: {
-                'from': 0,
-                'query': {
-                    'range': {
-                        'tweet.id': {
-                            'gt': pastId
-                        }
-                    }
-                },
-                'sort': [{'tweet.id': 'asc'}]
-            }
-        }).then((res)=>{
-            return res.hits.hits.map((data)=>{
-                return data['_source'].tweet;
-            });
-        }, (err)=> {
-            console.error(err);
-            return err;
+        let count = this.tweets.legnth > k ? this.tweets.length - k : 0;
+        return this.tweets.slice(count).map((obj)=>{
+            return obj.tweet;
         });
     }
+
 
     // get Tweet Detail info
     getTweetDetail(id) {
@@ -123,99 +64,19 @@ class TweetsQueue {
     }
 
     search(text) {
-        return this.elasticSearch.search({
-            type: 'tweet',
-            index: 'twitter',
-            scroll: '60s',
-            body: {
-                size: 100,
-                query: {
-                    bool: {
-                        should: [{
-                            match: {
-                                'tweetDetail.text': text
-                            }
-                        }]
-                    }
-                }
-            }
-        }).then((res)=> {
-            let response = {
-                data: res.hits.hits.map((data)=>{
-                    return data['_source'].tweet;
-                }),
-                total: res.hits.total
-            };
-            if (response.data.length < response.total) {
-                response.scrollId = res._scroll_id;
-            }
-            return response;
-        }, (err)=> {
-            console.log(err);
-            return err;
-        });
+
     }
 
-    scroll(scrollId) {
-        return this.elasticSearch.scroll({
-            scrollId: scrollId,
-            scroll: '120s'
-        }).then((res)=> {
-            let response = {
-                data: res.hits.hits.map((data)=>{
-                    return data['_source'].tweet;
-                }),
-                total: res.hits.total
-            };
-            if (response.data.length < response.total) {
-                response.scrollId = res._scroll_id;
-            }
-            return response;
-        }, (err)=> {
-            console.log(err);
-            return err;
-        });
-    }
 
     getCount() {
         return this.count;
     }
 
     searchGeo(dis, coord) {
-        return this.elasticSearch.search({
-            index: 'twitter',
-            type: 'tweet',
-            scroll: '60s',
-            body: {
-                size: 100,
-                'query': {
-                    'bool' : {
-                        'must' : {
-                            'match_all' : {}
-                        },
-                        'filter' : {
-                            'geo_distance' : {
-                                'distance' : dis + 'km',
-                                'tweet.coordinates' : coord
-                            }
-                        }
-                    }
-                }
-            }
-        }).then((res)=> {
-            let response = {
-                data: res.hits.hits.map((data)=>{
-                    return data['_source'].tweet;
-                }),
-                total: res.hits.total
-            };
-            if (response.data.length < response.total) {
-                response.scrollId = res._scroll_id;
-            }
-            return response;
-        }, (err)=> {
-            console.log(err);
-        });
+    }
+
+    getShrink() {
+
     }
 
     hasNew(id) {
@@ -223,24 +84,6 @@ class TweetsQueue {
         return this.count - 1 != parseInt(id);
     }
 
-    shrinkIndex(currentCount) {
-        return this.elasticSearch.deleteByQuery({
-            index: 'twitter',
-            body: {
-                'query': {
-                    'range': {
-                        'tweet.id': {
-                            'lt': currentCount - TWEETS_SIZE
-                        }
-                    }
-                }
-            }
-        }, (res)=> {
-            console.log('Shrinking Index before: ', currentCount - TWEETS_SIZE);
-        }, (err)=> {
-            console.error('Shrinking Index ERROR: ', err);
-        });
-    }
 }
 
 const tweetsQueue = new TweetsQueue();

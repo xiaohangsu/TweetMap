@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,15 +55,15 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-
+/******/
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -74,6 +74,37 @@
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__google_map__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__google_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__google_map__);
 
+
+
+let grayIcon = {
+    url: 'https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-077327772237/markers.png',
+    size: new google.maps.Size(25,35),
+    origin: new google.maps.Point(138, 42),
+    anchor: new google.maps.Point(0, 0),
+    scaledSize: new google.maps.Size(200, 80)
+};
+
+let blackIcon = {
+    url: 'https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-077327772237/markers.png',
+    size: new google.maps.Size(25,35),
+    origin: new google.maps.Point(38, 2),
+    anchor: new google.maps.Point(0, 0),
+    scaledSize: new google.maps.Size(200, 80)
+};
+
+let orangeIcon = {
+    url: 'https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-077327772237/markers.png',
+    size: new google.maps.Size(25,35),
+    origin: new google.maps.Point(5, 42),
+    anchor: new google.maps.Point(0, 0),
+    scaledSize: new google.maps.Size(200, 80)
+};
+
+let icon = (label)=> {
+    if (label == 'positive') return orangeIcon;
+    if (label == 'negative') return blackIcon;
+    else return grayIcon;
+}
 
 class Tweets {
     constructor() {
@@ -92,7 +123,9 @@ class Tweets {
 
             for (let i in json) {
                 let latlng = {lat: json[i]['coordinates'][1], lng: json[i]['coordinates'][0]};
+
                 let marker = new google.maps.Marker({
+                    icon: icon(json[i].label),
                     position: latlng
                 });
                 this.lastId = json[i].id;
@@ -311,7 +344,7 @@ class Tweets {
 
 const tweets = new Tweets();
 
-/* harmony default export */ __webpack_exports__["a"] = tweets;
+/* harmony default export */ __webpack_exports__["a"] = (tweets);
 
 /***/ }),
 /* 1 */
@@ -325,7 +358,7 @@ module.exports = new google.maps.Map(document.getElementById('map'), googleMapCo
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vue__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vue__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__google_map__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__google_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__google_map__);
@@ -344,7 +377,7 @@ for (let i in __WEBPACK_IMPORTED_MODULE_2__google_map_style___default.a.ids) {
     __WEBPACK_IMPORTED_MODULE_1__google_map___default.a.setMapTypeId(__WEBPACK_IMPORTED_MODULE_2__google_map_style___default.a.ids[i]);
 }
 
-__WEBPACK_IMPORTED_MODULE_1__google_map___default.a.setMapTypeId('Standard');
+__WEBPACK_IMPORTED_MODULE_1__google_map___default.a.setMapTypeId('Aubergine');
 
 
 
@@ -521,7 +554,7 @@ __WEBPACK_IMPORTED_MODULE_1__google_map___default.a.controls[google.maps.Control
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony default export */ __webpack_exports__["default"] = {
+/* harmony default export */ __webpack_exports__["default"] = ({
     zoom: 2,
     center: {
         lat: 40.695204,
@@ -534,7 +567,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
         mapTypeIds: ['Standard', 'Silver', 'Retro', 'Dark', 'Night', 'Aubergine']
     }
-};
+});
 
 /***/ }),
 /* 5 */
@@ -1482,6 +1515,19 @@ module.exports = {
 
 /***/ }),
 /* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__google_map_component__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__request_public_tweet__ = __webpack_require__(0);
+__webpack_require__(3);
+
+
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -10053,10 +10099,10 @@ return Vue$3;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 var g;
@@ -10080,19 +10126,6 @@ try {
 // easier to handle this case. if(!global) { ...}
 
 module.exports = g;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__google_map_component__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__request_public_tweet__ = __webpack_require__(0);
-__webpack_require__(3);
-
-
 
 
 /***/ })
