@@ -13,6 +13,7 @@ if (CONFIG === 'dev') {
 
 
 router.get('/', (ctx, next)=> {
+    console.log(`/ | IP ${ctx.ip}`);
     return ctx.render('./index', {
         googleMapAPI: GOOGLEMAPAPI,
         staticPath: STATIC_PATH
